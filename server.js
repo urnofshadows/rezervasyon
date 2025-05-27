@@ -90,6 +90,16 @@ app.post('/reservations', (req, res) => {
         return res.status(400).json({ message: 'Geçersiz kullanıcı kodu formatı. 6 haneli bir sayı olmalıdır.' });
     }
 
+    // Server-side date validation: Prevent reservations for past dates
+    const reservationDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize today to start of day for comparison
+    reservationDate.setHours(0, 0, 0, 0); // Normalize reservationDate to start of day
+
+    if (reservationDate < today) {
+        return res.status(400).json({ message: 'Geçmiş bir tarih için rezervasyon yapılamaz.' });
+    }
+
     const users = readJsonFile(USERS_FILE);
     if (!users.includes(userCode)) {
         return res.status(401).json({ message: 'Geçersiz kullanıcı kodu.' });

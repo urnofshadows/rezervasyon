@@ -115,19 +115,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Add actual days
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize today to start of day for comparison
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayDiv = document.createElement('div');
                 dayDiv.classList.add('day');
                 dayDiv.textContent = day;
-                dayDiv.dataset.date = `${year}-${String(i + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const fullDateString = `${year}-${String(i + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                dayDiv.dataset.date = fullDateString;
 
-                // Check if this day has any reservations
-                const dayHasReservation = allReservations.some(res => res.date === dayDiv.dataset.date);
-                if (dayHasReservation) {
-                    dayDiv.classList.add('has-reservation');
+                const currentDayDate = new Date(fullDateString);
+                currentDayDate.setHours(0, 0, 0, 0); // Normalize currentDayDate to start of day
+
+                // Check if this day is in the past
+                if (currentDayDate < today) {
+                    dayDiv.classList.add('past-date');
+                    // Do not add click listener for past dates
+                } else {
+                    // Check if this day has any reservations
+                    const dayHasReservation = allReservations.some(res => res.date === dayDiv.dataset.date);
+                    if (dayHasReservation) {
+                        dayDiv.classList.add('has-reservation');
+                    }
+                    dayDiv.addEventListener('click', () => selectDay(dayDiv.dataset.date, allReservations));
                 }
-
-                dayDiv.addEventListener('click', () => selectDay(dayDiv.dataset.date, allReservations));
                 daysGrid.appendChild(dayDiv);
             }
             monthDiv.appendChild(daysGrid);
