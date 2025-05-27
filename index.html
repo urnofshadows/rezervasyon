@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezervasyon Uygulaması</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Rezervasyon Sistemi</h1>
+        <nav>
+            <a href="admin.html">Admin Paneli</a>
+        </nav>
+    </header>
+    <main>
+        <section class="calendar-section">
+            <div class="calendar-header">
+                <button id="prevYearBtn">Önceki Yıl</button>
+                <h2 id="currentYear"></h2>
+                <button id="nextYearBtn">Sonraki Yıl</button>
+            </div>
+            <div id="calendarContainer" class="calendar-grid">
+                <!-- Calendar will be generated here -->
+            </div>
+        </section>
+
+        <section class="time-slots-section">
+            <h2>Seçilen Gün: <span id="selectedDateDisplay"></span></h2>
+            <div id="timeSlots" class="time-slots-grid">
+                <!-- Time slots will be displayed here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Reservation Modal -->
+    <div id="reservationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Rezervasyon Onayı</h3>
+            <p>Seçilen Tarih: <span id="modalDate"></span></p>
+            <p>Seçilen Saat: <span id="modalTime"></span></p>
+            <label for="userCode">Kullanıcı Kodu (6 haneli):</label>
+            <input type="text" id="userCode" maxlength="6" pattern="\d{6}" title="Lütfen 6 haneli bir sayı girin." required>
+            <p id="modalMessage" class="message"></p>
+            <button id="confirmReservationBtn">Rezervasyonu Onayla</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

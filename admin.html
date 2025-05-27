@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Paneli</h1>
+        <nav>
+            <a href="index.html">Ana Sayfa</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="login-section">
+            <h2>Admin Girişi</h2>
+            <div class="login-form">
+                <label for="adminUsername">Kullanıcı Adı:</label>
+                <input type="text" id="adminUsername" required>
+                <label for="adminPassword">Şifre:</label>
+                <input type="password" id="adminPassword" required>
+                <p id="loginMessage" class="message"></p>
+                <button id="loginBtn">Giriş Yap</button>
+            </div>
+        </section>
+
+        <section id="admin-dashboard" style="display: none;">
+            <h2>Yönetim Paneli</h2>
+
+            <div class="dashboard-section">
+                <h3>Rezervasyonlar</h3>
+                <table id="reservationsTable">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Saat</th>
+                            <th>Kullanıcı Kodu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Reservations will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dashboard-section">
+                <h3>Kullanıcı Kodları</h3>
+                <ul id="userCodesList">
+                    <!-- User codes will be loaded here -->
+                </ul>
+                <div class="user-management">
+                    <input type="text" id="newUserCode" maxlength="6" pattern="\d{6}" placeholder="Yeni 6 haneli kod" required>
+                    <button id="addUserBtn">Kullanıcı Ekle</button>
+                    <p id="userMessage" class="message"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
