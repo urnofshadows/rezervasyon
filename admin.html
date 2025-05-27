@@ -38,12 +38,33 @@
                             <th>Tarih</th>
                             <th>Saat</th>
                             <th>Kullanıcı Kodu</th>
+                            <th>İşlemler</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Reservations will be loaded here -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Edit Reservation Modal -->
+            <div id="editReservationModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-button-edit">&times;</span>
+                    <h3>Rezervasyon Düzenle</h3>
+                    <p>Eski Tarih: <span id="oldModalDate"></span></p>
+                    <p>Eski Saat: <span id="oldModalTime"></span></p>
+                    <label for="newReservationDate">Yeni Tarih:</label>
+                    <input type="date" id="newReservationDate" required>
+                    <label for="newReservationTime">Yeni Saat:</label>
+                    <select id="newReservationTime" required>
+                        <!-- Time slots will be populated by JS -->
+                    </select>
+                    <label for="newReservationUserCode">Yeni Kullanıcı Kodu (6 karakterli):</label>
+                    <input type="text" id="newReservationUserCode" maxlength="6" required>
+                    <p id="editModalMessage" class="message"></p>
+                    <button id="confirmEditReservationBtn">Güncelle</button>
+                </div>
             </div>
 
             <div class="dashboard-section">

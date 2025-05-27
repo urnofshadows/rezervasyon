@@ -150,6 +150,105 @@ table tbody tr:hover {
     background-color: #505050;
 }
 
+table td:last-child {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-btn, .delete-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+
+.edit-btn {
+    background-color: #2196f3; /* Blue for edit */
+}
+
+.edit-btn:hover {
+    background-color: #1976d2;
+}
+
+.delete-btn {
+    background-color: #f44336; /* Red for delete */
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Modal Styles (reusing .modal and .modal-content from style.css) */
+#editReservationModal .modal-content input[type="date"],
+#editReservationModal .modal-content select,
+#editReservationModal .modal-content input[type="text"] {
+    width: calc(100% - 40px);
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #666;
+    background-color: #4a4a4a;
+    color: #e0e0e0;
+    border-radius: 5px;
+    font-size: 1.2em;
+    text-align: center;
+    display: block; /* Ensure they take full width */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#editReservationModal .modal-content select {
+    appearance: none; /* Remove default select arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e0e0e0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px auto;
+}
+
+.close-button-edit {
+    color: #a0a0a0;
+    float: right;
+    font-size: 35px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-button-edit:hover,
+.close-button-edit:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Responsive Adjustments for new elements */
+@media (max-width: 768px) {
+    table td:last-child {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .edit-btn, .delete-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #editReservationModal .modal-content input[type="date"],
+    #editReservationModal .modal-content select,
+    #editReservationModal .modal-content input[type="text"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+    }
+}
+
 /* User Codes List */
 #userCodesList {
     list-style: none;

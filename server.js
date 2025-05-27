@@ -86,8 +86,8 @@ app.post('/reservations', (req, res) => {
     if (!date || !time || !userCode) {
         return res.status(400).json({ message: 'Tarih, saat ve kullanıcı kodu gerekli.' });
     }
-    if (typeof userCode !== 'string' || !/^\d{6}$/.test(userCode)) {
-        return res.status(400).json({ message: 'Geçersiz kullanıcı kodu formatı. 6 haneli bir sayı olmalıdır.' });
+    if (typeof userCode !== 'string' || !/^[a-zA-Z0-9]{6}$/.test(userCode)) { // Updated regex for userCode
+        return res.status(400).json({ message: 'Geçersiz kullanıcı kodu formatı. 6 karakterli (harf ve/veya sayı) olmalıdır.' });
     }
 
     // Server-side date validation: Prevent reservations for past dates
@@ -120,6 +120,59 @@ app.post('/reservations', (req, res) => {
     reservations.push(newReservation);
     writeJsonFile(RESERVATIONS_FILE, reservations);
     res.status(201).json({ message: 'Rezervasyon başarıyla oluşturuldu.', reservation: newReservation });
+});
+
+// DELETE /reservations/:date/:time
+app.delete('/reservations/:date/:time', (req, res) => {
+    const { date, time } = req.params;
+    let reservations = readJsonFile(RESERVATIONS_FILE);
+    const initialLength = reservations.length;
+    reservations = reservations.filter(res => !(res.date === date && res.time === time));
+
+    if (reservations.length === initialLength) {
+        return res.status(404).json({ message: 'Rezervasyon bulunamadı.' });
+    }
+
+    writeJsonFile(RESERVATIONS_FILE, reservations);
+    res.status(200).json({ message: 'Rezervasyon başarıyla silindi.' });
+});
+
+// PUT /reservations/:date/:time
+app.put('/reservations/:date/:time', (req, res) => {
+    const { date, time } = req.params;
+    const { newDate, newTime, newUserCode } = req.body;
+
+    if (!newDate || !newTime || !newUserCode) {
+        return res.status(400).json({ message: 'Yeni tarih, saat ve kullanıcı kodu gerekli.' });
+    }
+    if (typeof newUserCode !== 'string' || !/^[a-zA-Z0-9]{6}$/.test(newUserCode)) {
+        return res.status(400).json({ message: 'Geçersiz yeni kullanıcı kodu formatı. 6 karakterli (harf ve/veya sayı) olmalıdır.' });
+    }
+
+    const users = readJsonFile(USERS_FILE);
+    if (!users.includes(newUserCode)) {
+        return res.status(401).json({ message: 'Geçersiz yeni kullanıcı kodu.' });
+    }
+
+    let reservations = readJsonFile(RESERVATIONS_FILE);
+    const reservationIndex = reservations.findIndex(res => res.date === date && res.time === time);
+
+    if (reservationIndex === -1) {
+        return res.status(404).json({ message: 'Rezervasyon bulunamadı.' });
+    }
+
+    // Check if the new date/time slot is already reserved by another reservation
+    const existingReservationAtNewSlot = reservations.find((res, index) =>
+        index !== reservationIndex && res.date === newDate && res.time === newTime
+    );
+
+    if (existingReservationAtNewSlot) {
+        return res.status(409).json({ message: 'Yeni saat dilimi zaten rezerve edilmiş.' });
+    }
+
+    reservations[reservationIndex] = { date: newDate, time: newTime, userCode: newUserCode };
+    writeJsonFile(RESERVATIONS_FILE, reservations);
+    res.status(200).json({ message: 'Rezervasyon başarıyla güncellendi.', reservation: reservations[reservationIndex] });
 });
 
 app.listen(PORT, () => {
