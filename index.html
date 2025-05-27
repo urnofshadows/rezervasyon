@@ -16,9 +16,9 @@
     <main>
         <section class="calendar-section">
             <div class="calendar-header">
-                <button id="prevYearBtn">Önceki Yıl</button>
-                <h2 id="currentYear"></h2>
-                <button id="nextYearBtn">Sonraki Yıl</button>
+                <button id="prevMonthBtn">Önceki Ay</button>
+                <h2 id="currentMonthYearDisplay"></h2>
+                <button id="nextMonthBtn">Sonraki Ay</button>
             </div>
             <div id="calendarContainer" class="calendar-grid">
                 <!-- Calendar will be generated here -->
@@ -40,8 +40,8 @@
             <h3>Rezervasyon Onayı</h3>
             <p>Seçilen Tarih: <span id="modalDate"></span></p>
             <p>Seçilen Saat: <span id="modalTime"></span></p>
-            <label for="userCode">Kullanıcı Kodu (6 haneli):</label>
-            <input type="text" id="userCode" maxlength="6" pattern="\d{6}" title="Lütfen 6 haneli bir sayı girin." required>
+            <label for="userCode">Kullanıcı Kodu (6 karakterli):</label>
+            <input type="text" id="userCode" maxlength="6" pattern="[a-zA-Z0-9]{6}" title="Lütfen 6 karakterli (harf ve/veya sayı) bir kod girin." required>
             <p id="modalMessage" class="message"></p>
             <button id="confirmReservationBtn">Rezervasyonu Onayla</button>
         </div>

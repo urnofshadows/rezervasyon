@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const calendarContainer = document.getElementById('calendarContainer');
-    const currentYearDisplay = document.getElementById('currentYear');
-    const prevYearBtn = document.getElementById('prevYearBtn');
-    const nextYearBtn = document.getElementById('nextYearBtn');
+    const currentMonthYearDisplay = document.getElementById('currentMonthYearDisplay');
+    const prevMonthBtn = document.getElementById('prevMonthBtn');
+    const nextMonthBtn = document.getElementById('nextMonthBtn');
     const selectedDateDisplay = document.getElementById('selectedDateDisplay');
     const timeSlotsContainer = document.getElementById('timeSlots');
     const reservationModal = document.getElementById('reservationModal');
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalMessage = document.getElementById('modalMessage');
 
     let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth(); // 0-indexed (0 for January)
     let selectedDate = null;
     let selectedTimeSlot = null;
 
@@ -75,76 +76,70 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Calendar Functions ---
-    async function renderCalendar(year) {
+    async function renderCalendar(year, monthIndex) {
         calendarContainer.innerHTML = '';
-        currentYearDisplay.textContent = year;
+        currentMonthYearDisplay.textContent = `${MONTH_NAMES[monthIndex]} ${year}`;
         const allReservations = await fetchReservations();
 
-        for (let i = 0; i < 12; i++) {
-            const monthDiv = document.createElement('div');
-            monthDiv.classList.add('month');
+        const monthDiv = document.createElement('div');
+        monthDiv.classList.add('month');
 
-            const monthName = document.createElement('h3');
-            monthName.textContent = MONTH_NAMES[i];
-            monthDiv.appendChild(monthName);
+        const daysGrid = document.createElement('div');
+        daysGrid.classList.add('days-grid');
 
-            const daysGrid = document.createElement('div');
-            daysGrid.classList.add('days-grid');
+        // Add day names
+        DAY_NAMES.forEach(dayName => {
+            const dayNameSpan = document.createElement('span');
+            dayNameSpan.classList.add('day-name');
+            dayNameSpan.textContent = dayName;
+            daysGrid.appendChild(dayNameSpan);
+        });
 
-            // Add day names
-            DAY_NAMES.forEach(dayName => {
-                const dayNameSpan = document.createElement('span');
-                dayNameSpan.classList.add('day-name');
-                dayNameSpan.textContent = dayName;
-                daysGrid.appendChild(dayNameSpan);
-            });
+        const firstDay = new Date(year, monthIndex, 1).getDay();
+        const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
 
-            const firstDay = new Date(year, i, 1).getDay();
-            const daysInMonth = new Date(year, i + 1, 0).getDate();
+        // Adjust first day for Monday start (0=Sunday, 1=Monday, ..., 6=Saturday)
+        // If Sunday (0), make it 6 (Saturday in our Pzt-Paz week)
+        // Otherwise, subtract 1
+        const startDayOffset = (firstDay === 0) ? 6 : firstDay - 1;
 
-            // Adjust first day for Monday start (0=Sunday, 1=Monday, ..., 6=Saturday)
-            // If Sunday (0), make it 6 (Saturday in our Pzt-Paz week)
-            // Otherwise, subtract 1
-            const startDayOffset = (firstDay === 0) ? 6 : firstDay - 1;
-
-            // Add empty days for alignment
-            for (let j = 0; j < startDayOffset; j++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.classList.add('day', 'empty');
-                daysGrid.appendChild(emptyDay);
-            }
-
-            // Add actual days
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Normalize today to start of day for comparison
-
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayDiv = document.createElement('div');
-                dayDiv.classList.add('day');
-                dayDiv.textContent = day;
-                const fullDateString = `${year}-${String(i + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                dayDiv.dataset.date = fullDateString;
-
-                const currentDayDate = new Date(fullDateString);
-                currentDayDate.setHours(0, 0, 0, 0); // Normalize currentDayDate to start of day
-
-                // Check if this day is in the past
-                if (currentDayDate < today) {
-                    dayDiv.classList.add('past-date');
-                    // Do not add click listener for past dates
-                } else {
-                    // Check if this day has any reservations
-                    const dayHasReservation = allReservations.some(res => res.date === dayDiv.dataset.date);
-                    if (dayHasReservation) {
-                        dayDiv.classList.add('has-reservation');
-                    }
-                    dayDiv.addEventListener('click', () => selectDay(dayDiv.dataset.date, allReservations));
-                }
-                daysGrid.appendChild(dayDiv);
-            }
-            monthDiv.appendChild(daysGrid);
-            calendarContainer.appendChild(monthDiv);
+        // Add empty days for alignment
+        for (let j = 0; j < startDayOffset; j++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.classList.add('day', 'empty');
+            daysGrid.appendChild(emptyDay);
         }
+
+        // Add actual days
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Normalize today to start of day for comparison
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.classList.add('day');
+            dayDiv.textContent = day;
+            const fullDateString = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dayDiv.dataset.date = fullDateString;
+
+            const currentDayDate = new Date(fullDateString);
+            currentDayDate.setHours(0, 0, 0, 0); // Normalize currentDayDate to start of day
+
+            // Check if this day is in the past
+            if (currentDayDate < today) {
+                dayDiv.classList.add('past-date');
+                // Do not add click listener for past dates
+            } else {
+                // Check if this day has any reservations
+                const dayHasReservation = allReservations.some(res => res.date === dayDiv.dataset.date);
+                if (dayHasReservation) {
+                    dayDiv.classList.add('has-reservation');
+                }
+                dayDiv.addEventListener('click', () => selectDay(dayDiv.dataset.date, allReservations));
+            }
+            daysGrid.appendChild(dayDiv);
+        }
+        monthDiv.appendChild(daysGrid);
+        calendarContainer.appendChild(monthDiv);
     }
 
     async function selectDay(dateString, allReservations = null) {
@@ -230,17 +225,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Event Listeners ---
-    prevYearBtn.addEventListener('click', () => {
-        currentYear--;
-        renderCalendar(currentYear);
+    prevMonthBtn.addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendar(currentYear, currentMonth);
         selectedDate = null; // Reset selected date
         selectedDateDisplay.textContent = '';
         timeSlotsContainer.innerHTML = ''; // Clear time slots
     });
 
-    nextYearBtn.addEventListener('click', () => {
-        currentYear++;
-        renderCalendar(currentYear);
+    nextMonthBtn.addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar(currentYear, currentMonth);
         selectedDate = null; // Reset selected date
         selectedDateDisplay.textContent = '';
         timeSlotsContainer.innerHTML = ''; // Clear time slots
@@ -255,8 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     confirmReservationBtn.addEventListener('click', async () => {
         const userCode = userCodeInput.value;
-        if (!userCode || !/^\d{6}$/.test(userCode)) {
-            modalMessage.textContent = 'Lütfen 6 haneli geçerli bir kullanıcı kodu girin.';
+        if (!userCode || !/^[a-zA-Z0-9]{6}$/.test(userCode)) {
+            modalMessage.textContent = 'Lütfen 6 karakterli (harf ve/veya sayı) geçerli bir kullanıcı kodu girin.';
             modalMessage.classList.add('error');
             modalMessage.classList.remove('success');
             return;
@@ -288,5 +291,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial render
-    renderCalendar(currentYear);
+    renderCalendar(currentYear, currentMonth);
 });
