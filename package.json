@@ -4,7 +4,7 @@
   "description": "A full reservation web application",
   "main": "server.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
