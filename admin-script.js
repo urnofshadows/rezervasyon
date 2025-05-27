@@ -165,8 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addUserBtn.addEventListener('click', async () => {
         const newCode = newUserCodeInput.value;
-        if (!newCode || !/^\d{6}$/.test(newCode)) {
-            displayUserMessage('Lütfen 6 haneli geçerli bir kullanıcı kodu girin.', 'error');
+        // Allow alphanumeric characters, exactly 6 in length
+        if (!newCode || !/^[a-zA-Z0-9]{6}$/.test(newCode)) {
+            displayUserMessage('Lütfen 6 karakterli (harf ve/veya sayı) geçerli bir kullanıcı kodu girin.', 'error');
             return;
         }
 

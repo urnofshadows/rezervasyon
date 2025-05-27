@@ -42,8 +42,8 @@ app.get('/users', (req, res) => {
 // POST /users
 app.post('/users', (req, res) => {
     const { code } = req.body;
-    if (!code || typeof code !== 'string' || !/^\d{6}$/.test(code)) {
-        return res.status(400).json({ message: 'Geçersiz kullanıcı kodu. 6 haneli bir sayı olmalıdır.' });
+    if (!code || typeof code !== 'string' || !/^[a-zA-Z0-9]{6}$/.test(code)) {
+        return res.status(400).json({ message: 'Geçersiz kullanıcı kodu. 6 karakterli (harf ve/veya sayı) olmalıdır.' });
     }
 
     const users = readJsonFile(USERS_FILE);
